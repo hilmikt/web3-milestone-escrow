@@ -55,4 +55,11 @@ contract MilestoneEscrow {
         milestoneCount++;
     }
 
+    /// @notice Approves a milestone so the freelancer can withdraw funds
+    /// @dev Only the client can approve
+    /// @param _id Milestone ID
+    function approveMilestone(uint256 _id) external onlyClient {
+        milestones[_id].approved = true;
+    }
+
 }
