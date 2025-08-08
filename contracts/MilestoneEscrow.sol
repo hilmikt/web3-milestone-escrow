@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+    /// @author Muhammed Hilmi K T
     /// @dev Base contract for milestone-based payments between a client and a freelancer.
     /// @notice Deploy this contract by specifying the freelancer address.
 
@@ -61,5 +62,20 @@ contract MilestoneEscrow {
     function approveMilestone(uint256 _id) external onlyClient {
         milestones[_id].approved = true;
     }
+
+    /// @notice Releases funds for an approved milestone to the freelancer
+    /// @dev Only the freelancer can call this after client approval
+    /// @param _id Milestone ID
+    function releaseMilestone(uint256 _id) external onlyFreelancer {
+        Milestone storage m = milestones[_id];
+        require(m.approved, "Milestone not approved");
+        require(!m.released, "Already released");
+
+        m.released = true;
+        payable(freelancer).transfer(m.amount);
+    }
+
+    /// @notice Allows the contract to receive Ether
+    receive() external payable {}
 
 }
