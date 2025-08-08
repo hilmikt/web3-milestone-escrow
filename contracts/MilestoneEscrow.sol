@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-    @title MilestoneEscrow
-    @dev Base contract for milestone-based payments between a client and a freelancer.
-    @notice Deploy this contract by specifying the freelancer address.
+    /// @dev Base contract for milestone-based payments between a client and a freelancer.
+    /// @notice Deploy this contract by specifying the freelancer address.
 
 contract MilestoneEscrow {
     /// @notice Address of the client
@@ -27,5 +26,19 @@ contract MilestoneEscrow {
         client = msg.sender;
         freelancer = _freelancer;
     }
+
+    /// @notice Represents a project milestone
+    /// @param amount The agreed payment for this milestone in wei.
+    /// @param approved Status indicating if the client approved the milestone.
+    /// @param released Status indicating if the funds were released to the freelancer.
+
+    struct Milestone {
+        uint256 amount;
+        bool approved;
+        bool released;
+    }
+
+    /// @notice Mapping from milestone ID to Milestone data
+    mapping (uint256 => Milestone) public milestones;
 
 }
