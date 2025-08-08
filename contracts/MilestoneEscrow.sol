@@ -14,7 +14,13 @@ contract MilestoneEscrow {
     /// @notice Number of milestones created
     uint256 public milestoneCount;
 
-    /// @dev Modifier to restrict actions to the client
+    /// @dev Modifier to restrict actions to the freelancer
+    modifier onlyClient() {
+        require(msg.sender == client, "Not client");
+        _;
+    }
+
+    /// @dev Modifier to restrict actions to the freelancer
     modifier onlyFreelancer() {
         require(msg.sender == freelancer, "Not freelancer");
         _;
@@ -40,5 +46,13 @@ contract MilestoneEscrow {
 
     /// @notice Mapping from milestone ID to Milestone data
     mapping (uint256 => Milestone) public milestones;
+
+    /// @notice Creates a new milestone with a specified amount
+    /// @dev Only the client can call this
+    /// @param _amount Amount for this milestone in wei
+    function createMilestone(uint256 _amount) external onlyClient {
+        milestones[milestoneCount] = Milestone(_amount, false, false);
+        milestoneCount++;
+    }
 
 }
