@@ -38,7 +38,6 @@ contract MilestoneEscrow {
     /// @param amount The agreed payment for this milestone in wei.
     /// @param approved Status indicating if the client approved the milestone.
     /// @param released Status indicating if the funds were released to the freelancer.
-
     struct Milestone {
         uint256 amount;
         bool approved;

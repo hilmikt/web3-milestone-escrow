@@ -1,15 +1,46 @@
-# Remix compiler artifacts
-**/artifacts/
-**/artifacts/**
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
 
-# Remix plugin state folders
-deps/
-states/
+# Build outputs
+dist/
+build/
+.cache/
+.next/
+out/
 
-# Debug info
-*.dbg.json
-*.tsbuildinfo
+# Logs
+*.log
+logs
+*.csv
 
-# Optional
+# Environment variables
 .env
 .env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Coverage
+coverage/
+*.lcov
+
+# Hardhat / Foundry Artifacts
+artifacts/
+cache/
+typechain/
+typechain-types/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Misc
+tmp/
+temp/
