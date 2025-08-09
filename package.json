@@ -1,4 +1,32 @@
 {
+  "name": "web3-milestone-escrow",
+  "version": "1.0.0",
+  "description": "A clean, open-source implementation of a milestone-based escrow system built with Solidity, Hardhat, Next.js, TailwindCSS, ShadCN/UI, and Framer Motion.  \r Features role-based dashboards, a startup-style landing page, wallet connection, and responsive UI — perfect for freelance-client trustless payments.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hilmikt/web3-milestone-escrow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hilmikt/web3-milestone-escrow/issues"
+  },
+  "homepage": "https://github.com/hilmikt/web3-milestone-escrow#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "hardhat": "^2.26.2"
+  }
+}
+{
   "name": "milestone-escrow",
   "version": "1.0.0",
   "scripts": {
@@ -11,3 +39,4 @@
     "hardhat": "^2.17.0"
   }
 }
+
