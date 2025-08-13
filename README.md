@@ -35,7 +35,7 @@ Features role-based dashboards, a startup-style landing page, wallet connection,
 ## ⚡ Quick Start
 
 1️⃣ **Clone the repo**  
-git clone https://github.com/your-username/mintaro-milestone-escrow.git  
+git clone https://github.com/hilmikt/mintaro-milestone-escrow.git  
 cd mintaro-milestone-escrow  
 
 2️⃣ **Install dependencies**  
