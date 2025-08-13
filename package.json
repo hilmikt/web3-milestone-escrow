@@ -7,15 +7,15 @@
     "doc": "docs"
   },
   "scripts": {
-  "format": "prettier --write .",
-  "lint:js": "eslint . --ext .js,.cjs",
-  "lint:sol": "solhint 'contracts/**/*.sol'",
-  "lint": "npm run lint:js && npm run lint:sol",
-  "test": "hardhat test"
+    "format": "prettier --write .",
+    "lint:js": "eslint . --ext .js,.cjs",
+    "lint:sol": "solhint 'contracts/**/*.sol'",
+    "lint": "npm run lint:js && npm run lint:sol",
+    "test": "hardhat test"
   },
   "lint-staged": {
-  "*.{js,cjs,json,md}": "prettier --write",
-  "contracts/**/*.sol": "prettier --write && solhint"
+    "*.{js,cjs,json,md}": "prettier --write",
+    "contracts/**/*.sol": "prettier --write && solhint"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.3.0",
     "hardhat": "^2.26.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.5",
@@ -42,4 +43,3 @@
     "solhint": "^6.0.0"
   }
 }
-
