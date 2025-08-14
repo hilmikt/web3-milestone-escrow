@@ -11,7 +11,8 @@
     "lint:js": "eslint . --ext .js,.cjs",
     "lint:sol": "solhint 'contracts/**/*.sol'",
     "lint": "npm run lint:js && npm run lint:sol",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{js,cjs,json,md}": "prettier --write",

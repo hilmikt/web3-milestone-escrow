@@ -13,23 +13,23 @@ module.exports = [
       'coverage/**',
       'node_modules/**',
       'frontend/.next/**',
-      '**/ignition/**'
+      '**/ignition/**',
     ],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'commonjs',
       globals: {
-        ...globals.node // console, process, etc.
-      }
+        ...globals.node, // console, process, etc.
+      },
     },
     plugins: {
-      import: pluginImport
+      import: pluginImport,
     },
     rules: {
       ...js.configs.recommended.rules,
       'import/order': ['warn', { 'newlines-between': 'always', alphabetize: { order: 'asc' } }],
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
-    }
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    },
   },
 
   // tests: Mocha + Hardhat runtime
@@ -37,10 +37,10 @@ module.exports = [
     files: ['**/{test,tests,__tests__}/**/*.{js,cjs,mjs}'],
     languageOptions: {
       globals: {
-        ...globals.mocha,   // describe, it, beforeEach, etc.
-        ethers: 'readonly'  // hardhat runtime
-      }
-    }
+        ...globals.mocha, // describe, it, beforeEach, etc.
+        ethers: 'readonly', // hardhat runtime
+      },
+    },
   },
 
   // hardhat scripts (deploy, tasks, etc.)
@@ -49,8 +49,8 @@ module.exports = [
     languageOptions: {
       globals: {
         ...globals.node,
-        ethers: 'readonly'
-      }
-    }
-  }
+        ethers: 'readonly',
+      },
+    },
+  },
 ];

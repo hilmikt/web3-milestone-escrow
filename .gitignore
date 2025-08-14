@@ -10,10 +10,6 @@ dist/
 build/
 .cache/
 
-# Next.js
-.next/
-out/
-
 # Environment variables
 .env
 .env.local
@@ -49,8 +45,6 @@ coverage/
 # Temporary files
 tmp/
 temp/
-
-package-lock.json
 
 # Lockfiles (optional - uncomment if you don't want them tracked)
 # yarn.lock

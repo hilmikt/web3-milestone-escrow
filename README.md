@@ -1,73 +1,46 @@
-# Mintaro Milestone Escrow — Full-Stack Web3 Showcase
+# Web3 Milestone Escrow — Prototype Contracts
 
-A clean, open-source implementation of a milestone-based escrow system built with Solidity, Hardhat, Next.js, TailwindCSS, ShadCN/UI, and Framer Motion.  
-Features role-based dashboards, a startup-style landing page, wallet connection, and responsive UI — perfect for freelance-client trustless payments.
+A prototype milestone-based escrow system built with Solidity and Hardhat.  
+Implements basic milestone funding and release logic suitable for freelance–client trustless payments.
 
----
-
-## 🚀 Features
-
-- Smart Contract — Milestone-based escrow logic (Freelancer & Client roles)  
-- Frontend — Next.js 14 + Tailwind + ShadCN/UI + Framer Motion  
-- Role-based Dashboards  
-- Wallet Integration — wagmi + RainbowKit  
-- Responsive & Modern Design  
-- Open Source & Modular — ready for forking and extending  
-
----
+## 🚀 Current Features
+- Solidity contracts for milestone-based escrow
+- Hardhat testing suite with example tests
+- ESLint + Prettier + Solhint configured for clean, consistent code
+- Local Hardhat network support
 
 ## 📂 Project Structure
+- /contracts — Solidity contracts
+- /scripts — Optional deployment and interaction scripts
+- /test — Hardhat tests
+- /artifacts, /cache — Generated build output (ignored by git)
 
-- /contracts — Solidity contracts, Hardhat scripts, and tests  
-- /frontend — Next.js app (landing page + dashboards)  
-- /docs — Architecture diagram, screenshots, and setup guide  
-
----
-
-## 🛠️ Tech Stack
-
-- Smart Contract: Solidity, Hardhat  
-- Frontend: Next.js, TailwindCSS, ShadCN/UI, Framer Motion  
-- Wallet: wagmi, RainbowKit  
-
----
+## 🛠 Tech Stack
+- Smart Contracts: Solidity 0.8.24
+- Dev Environment: Hardhat 2.26.x
+- Linting/Formatting: ESLint v9, Prettier, Solhint
+- Testing: Mocha + Chai via Hardhat toolbox
 
 ## ⚡ Quick Start
+1. Clone  
+   git clone https://github.com/hilmikt/web3-milestone-escrow.git  
+   cd web3-milestone-escrow  
 
-1️⃣ **Clone the repo**  
-git clone https://github.com/hilmikt/mintaro-milestone-escrow.git  
-cd mintaro-milestone-escrow  
+2. Install dependencies  
+   npm install  
 
-2️⃣ **Install dependencies**  
+3. Format & lint  
+   npm run format  
+   npm run lint  
 
-**Contracts**  
-cd contracts  
-npm install  
+4. Compile  
+   npx hardhat compile  
 
-**Frontend**  
-cd ../frontend  
-npm install  
+5. Run tests  
+   npm test  
 
-3️⃣ **Compile & Deploy Smart Contracts**  
-cd contracts  
-npx hardhat compile  
-npx hardhat run scripts/deploy.js --network <network>  
+## 📜 License
+ISC License — free to use and modify.
 
-4️⃣ **Start the Frontend**  
-cd ../frontend  
-npm run dev  
-
----
-
-## 📸 Screenshots  
-See /docs/screenshots.  
-
----
-
-## 📜 License  
-MIT License — free to use and modify.  
-
----
-
-## 🙌 Contributing  
-PRs are welcome! Please follow the contribution guidelines in docs/setup-guide.md.  
+## 🙌 Contributing
+PRs are welcome! Please run **npm run lint** and **npm test** before opening a pull request.
