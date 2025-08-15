@@ -1,80 +1,134 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
-    /// @author Muhammed Hilmi K T
-    /// @dev Base contract for milestone-based payments between a client and a freelancer.
-    /// @notice Deploy this contract by specifying the freelancer address.
+/// @title Milestone-based escrow between a client and a freelancer
+/// @author Hilmi
+/// @notice Client funds each milestone; freelancer can withdraw only after client approval
+/// @dev Minimal, prototype-ready; uses pull-payments + simple reentrancy guard
 
 contract MilestoneEscrow {
-    /// @notice Address of the client
-    address public client;
+    // ---------- Errors ----------
+    error NotClient();
+    error NotFreelancer();
+    error InvalidMilestone();
+    error AlreadyReleased();
+    error NotApproved();
+    error AlreadyApproved();
+    error ZeroAmount();
+    error NotCancelable();
 
-    /// @notice Address of the freelancer
-    address public freelancer;
+    // ---------- Events ----------
+    event MilestoneCreated(uint256 indexed id, uint256 amount);
+    event MilestoneFunded(uint256 indexed id, uint256 amount, address indexed from);
+    event MilestoneApproved(uint256 indexed id, address indexed by);
+    event MilestoneReleased(uint256 indexed id, uint256 amount, address indexed to);
+    event MilestoneCanceled(uint256 indexed id, uint256 refunded);
 
-    /// @notice Number of milestones created
-    uint256 public milestoneCount;
+    // ---------- Roles ----------
+    address public immutable client;
+    address public immutable freelancer;
 
-    /// @dev Modifier to restrict actions to the freelancer
+    // ---------- State ----------
+    struct Milestone {
+        uint256 amount;     // expected funding (wei)
+        uint256 balance;    // actually funded (wei)
+        bool approved;      // client approved
+        bool released;      // paid out to freelancer
+    }
+    Milestone[] public milestones;
+
+    // ---------- Simple reentrancy guard ----------
+    uint256 private _status;
+    modifier nonReentrant() {
+        require(_status == 0, "REENTRANCY");
+        _status = 1;
+        _;
+        _status = 0;
+    }
+
+    // ---------- Modifiers ----------
     modifier onlyClient() {
-        require(msg.sender == client, "Not client");
+        if (msg.sender != client) revert NotClient();
         _;
     }
 
-    /// @dev Modifier to restrict actions to the freelancer
     modifier onlyFreelancer() {
-        require(msg.sender == freelancer, "Not freelancer");
+        if (msg.sender != freelancer) revert NotFreelancer();
         _;
     }
 
-    /// @notice Constructor to set the freelancer address and client as deployer
-    /// @param _freelancer Address of the freelancer
-    constructor(address _freelancer) payable {
+    // ---------- Constructor ----------
+    /// @param _freelancer freelancer wallet to receive released funds
+    constructor(address _freelancer) {
+        require(_freelancer != address(0), "ZERO_FREELANCER");
         client = msg.sender;
         freelancer = _freelancer;
     }
 
-    /// @notice Represents a project milestone
-    /// @param amount The agreed payment for this milestone in wei.
-    /// @param approved Status indicating if the client approved the milestone.
-    /// @param released Status indicating if the funds were released to the freelancer.
-    struct Milestone {
-        uint256 amount;
-        bool approved;
-        bool released;
+    // ---------- Views ----------
+    function milestoneCount() external view returns (uint256) {
+        return milestones.length;
     }
 
-    /// @notice Mapping from milestone ID to Milestone data
-    mapping (uint256 => Milestone) public milestones;
-
-    /// @notice Creates a new milestone with a specified amount
-    /// @dev Only the client can call this
-    /// @param _amount Amount for this milestone in wei
+    // ---------- Mutations ----------
+    /// @notice Create a milestone with an expected amount (in wei)
+    /// @dev Only client. Not funded yet.
     function createMilestone(uint256 _amount) external onlyClient {
-        milestones[milestoneCount] = Milestone(_amount, false, false);
-        milestoneCount++;
+        if (_amount == 0) revert ZeroAmount();
+        milestones.push(Milestone({amount: _amount, balance: 0, approved: false, released: false}));
+        emit MilestoneCreated(milestones.length - 1, _amount);
     }
 
-    /// @notice Approves a milestone so the freelancer can withdraw funds
-    /// @dev Only the client can approve
-    /// @param _id Milestone ID
-    function approveMilestone(uint256 _id) external onlyClient {
-        milestones[_id].approved = true;
-    }
-
-    /// @notice Releases funds for an approved milestone to the freelancer
-    /// @dev Only the freelancer can call this after client approval
-    /// @param _id Milestone ID
-    function releaseMilestone(uint256 _id) external onlyFreelancer {
+    /// @notice Fund a milestone with ETH; can be called multiple times until expected amount is met
+    function fundMilestone(uint256 _id) external payable onlyClient {
+        if (_id >= milestones.length) revert InvalidMilestone();
+        if (msg.value == 0) revert ZeroAmount();
         Milestone storage m = milestones[_id];
-        require(m.approved, "Milestone not approved");
-        require(!m.released, "Already released");
+        m.balance += msg.value;
+        emit MilestoneFunded(_id, msg.value, msg.sender);
+    }
+
+    /// @notice Approve a milestone so the freelancer can withdraw
+    function approveMilestone(uint256 _id) external onlyClient {
+        if (_id >= milestones.length) revert InvalidMilestone();
+        Milestone storage m = milestones[_id];
+        if (m.approved) revert AlreadyApproved();
+        m.approved = true;
+        emit MilestoneApproved(_id, msg.sender);
+    }
+
+    /// @notice Freelancer withdraws funds for an approved milestone
+    /// @dev Pull payment; protects against reentrancy
+    function releaseMilestone(uint256 _id) external onlyFreelancer nonReentrant {
+        if (_id >= milestones.length) revert InvalidMilestone();
+        Milestone storage m = milestones[_id];
+        if (!m.approved) revert NotApproved();
+        if (m.released) revert AlreadyReleased();
+        uint256 amount = m.balance;
+        if (amount == 0) revert ZeroAmount();
 
         m.released = true;
-        payable(freelancer).transfer(m.amount);
+        m.balance = 0;
+
+        (bool ok, ) = payable(freelancer).call{value: amount}("");
+        require(ok, "PAY_FAIL");
+        emit MilestoneReleased(_id, amount, freelancer);
     }
 
-    /// @notice Allows the contract to receive Ether
-    receive() external payable {}
+    /// @notice Client can cancel and refund funds before approval/release
+    function cancelMilestone(uint256 _id) external onlyClient nonReentrant {
+        if (_id >= milestones.length) revert InvalidMilestone();
+        Milestone storage m = milestones[_id];
+        if (m.approved || m.released) revert NotCancelable();
 
+        uint256 refund = m.balance;
+        m.balance = 0;
+        (bool ok, ) = payable(client).call{value: refund}("");
+        require(ok, "REFUND_FAIL");
+
+        emit MilestoneCanceled(_id, refund);
+    }
+
+    // Fallback to receive eth if needed
+    receive() external payable {}
 }

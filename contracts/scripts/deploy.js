@@ -1,18 +1,23 @@
+/* eslint-disable no-console */
+const { ethers } = require('hardhat');
+
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const [client, freelancer] = await ethers.getSigners();
+  const Escrow = await ethers.getContractFactory('MilestoneEscrow', client);
+  const esc = await Escrow.deploy(freelancer.address);
+  await esc.waitForDeployment();
+  const addr = await esc.getAddress();
 
-  console.log('Deploying contract with account:', deployer.address);
-
-  const MilestoneEscrow = await ethers.getContractFactory('MilestoneEscrow');
-  const escrow = await MilestoneEscrow.deploy(deployer.address, {
-    value: ethers.utils.parseEther('1'),
-  });
-
-  await escrow.deployed();
-  console.log('MilestoneEscrow deployed to:', escrow.address);
+  console.log('MilestoneEscrow deployed at:', addr);
+  // example flow
+  const amt = ethers.parseEther('0.1');
+  await (await esc.createMilestone(amt)).wait();
+  await (await esc.fundMilestone(0, { value: amt })).wait();
+  await (await esc.approveMilestone(0)).wait();
+  console.log('Sample milestone created, funded, and approved');
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
 });

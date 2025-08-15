@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-npm run lint --silent || exit 1
-npm test --silent || exit 1
