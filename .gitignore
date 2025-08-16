@@ -42,6 +42,10 @@ coverage/
 .vscode/
 .idea/
 
+# Next.js build output
+.next/
+out/
+
 # Temporary files
 tmp/
 temp/

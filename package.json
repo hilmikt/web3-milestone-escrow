@@ -12,7 +12,10 @@
     "lint:sol": "solhint 'contracts/**/*.sol'",
     "lint": "npm run lint:js && npm run lint:sol",
     "test": "hardhat test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev": "cd frontend && next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "lint-staged": {
     "*.{js,cjs,json,md}": "prettier --write",
@@ -32,6 +35,7 @@
   "homepage": "https://github.com/hilmikt/web3-milestone-escrow#readme",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@types/react": "19.1.10",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -47,6 +51,9 @@
     "@rainbow-me/rainbowkit": "^2.2.8",
     "@tanstack/react-query": "^5.85.3",
     "ethers": "^6.15.0",
+    "next": "^15.4.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "viem": "^2.33.3",
     "wagmi": "^2.16.3"
   }
