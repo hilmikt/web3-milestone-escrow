@@ -1,16 +1,55 @@
 'use client';
 
+function pickMetaMask() {
+  if (typeof window === 'undefined') return undefined;
+  const eth = window.ethereum;
+  if (!eth) return undefined;
+  // If multiple providers, pick the one that is MetaMask
+  if (eth.providers?.length) {
+    return eth.providers.find((p) => p.isMetaMask) ?? eth;
+  }
+  return eth;
+}
+
 import { useState } from 'react';
 import { useAccount, useConnect, useDisconnect, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 import { ESCROW_ADDRESS, ESCROW_ABI } from '../lib/escrow';
 
+const onConnect = () => {
+  const mm = pickMetaMask();
+  if (!mm || !mm.isMetaMask) {
+    alert('No MetaMask detected. Please install/enable MetaMask and reload.');
+    return;
+  }
+  connect(); // your existing wagmi connect
+};
+
 function ConnectButton() {
   const { isConnected, address } = useAccount();
-  const { connect } = useConnect({ connector: injected() });
+  const { connect } = useConnect({ connector: injected({ target: 'metaMask', shimDisconnect: true }) });
   const { disconnect } = useDisconnect();
 
-  if (!isConnected) return <button onClick={() => connect()}>Connect Wallet (Injected)</button>;
+  // pick MetaMask (guards against multiple injected providers)
+  const pickMetaMask = () => {
+    if (typeof window === 'undefined') return undefined;
+    const eth = window.ethereum;
+    if (!eth) return undefined;
+    if (eth.providers?.length) return eth.providers.find((p) => p.isMetaMask) ?? eth;
+    return eth;
+  };
+
+  const onConnect = () => {
+    const mm = pickMetaMask();
+    if (!mm || !mm.isMetaMask) {
+      alert('No MetaMask detected. Install/enable MetaMask and reload.');
+      return;
+    }
+    connect(); // now in scope
+  };
+
+  if (!isConnected) return <button onClick={onConnect}>Connect Wallet (MetaMask)</button>;
+
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
       <span>Connected: {address.slice(0, 6)}…{address.slice(-4)}</span>
