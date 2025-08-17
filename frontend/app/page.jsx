@@ -27,10 +27,11 @@ const onConnect = () => {
 
 function ConnectButton() {
   const { isConnected, address } = useAccount();
-  const { connect } = useConnect({ connector: injected({ target: 'metaMask', shimDisconnect: true }) });
+  const { connect, error: connectError, isPending } = useConnect({
+    connector: injected({ target: 'metaMask', shimDisconnect: true })
+  });
   const { disconnect } = useDisconnect();
 
-  // pick MetaMask (guards against multiple injected providers)
   const pickMetaMask = () => {
     if (typeof window === 'undefined') return undefined;
     const eth = window.ethereum;
@@ -39,16 +40,33 @@ function ConnectButton() {
     return eth;
   };
 
-  const onConnect = () => {
+  const onConnect = async () => {
     const mm = pickMetaMask();
     if (!mm || !mm.isMetaMask) {
       alert('No MetaMask detected. Install/enable MetaMask and reload.');
       return;
     }
-    connect(); // now in scope
+    try {
+      // Force the permission request so the popup appears
+      await mm.request({ method: 'eth_requestAccounts' });
+      // Then let wagmi finalize the session
+      connect();
+    } catch (e) {
+      console.error('MetaMask connect failed:', e);
+      alert(`MetaMask connect failed: ${e?.message || e}`);
+    }
   };
 
-  if (!isConnected) return <button onClick={onConnect}>Connect Wallet (MetaMask)</button>;
+  if (!isConnected) {
+    return (
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <button onClick={onConnect} disabled={isPending}>
+          {isPending ? 'Connecting…' : 'Connect Wallet (MetaMask)'}
+        </button>
+        {connectError && <span style={{ color: 'crimson' }}>{String(connectError.message || connectError)}</span>}
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
