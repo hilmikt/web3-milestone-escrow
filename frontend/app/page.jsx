@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 import { ESCROW_ADDRESS, ESCROW_ABI } from '../lib/escrow';
@@ -16,7 +16,7 @@ function WalletBar() {
 
   // ⬇️ Prevent SSR/CSR mismatch
   const [mounted, setMounted] = useState(false);
-  React.useEffect(() => setMounted(true), []);
+  useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   const pickMetaMask = () => {
