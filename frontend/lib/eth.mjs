@@ -1,6 +1,7 @@
+'use client';
+
 import { parseEther, formatEther } from 'viem';
 
-/** safe parse from "0.1" -> bigint wei */
 export function toWei(str) {
   const n = String(str || '').trim();
   if (!n) throw new Error('Amount required');

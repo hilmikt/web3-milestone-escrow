@@ -7,7 +7,7 @@ import { ESCROW_ADDRESS, ESCROW_ABI } from '../lib/escrow';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
-import { toWei } from '../lib/eth';
+import { toWei } from '../lib/eth.mjs';
 
 function WalletBar() {
   const { isConnected, address } = useAccount();
