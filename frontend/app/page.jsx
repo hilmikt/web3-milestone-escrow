@@ -14,6 +14,11 @@ function WalletBar() {
   const { connect, isPending } = useConnect({ connector: injected({ target:'metaMask', shimDisconnect:true }) });
   const { disconnect } = useDisconnect();
 
+  // ⬇️ Prevent SSR/CSR mismatch
+  const [mounted, setMounted] = useState(false);
+  React.useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
   const pickMetaMask = () => {
     if (typeof window === 'undefined') return undefined;
     const eth = window.ethereum;
@@ -34,9 +39,9 @@ function WalletBar() {
       <div className="status">
         <span className="label">Status:</span>
         <span className="badge">Disconnected</span>
-        <Button variant="primary" onClick={onConnect} disabled={isPending}>
+        <button className="btn btn--primary" onClick={onConnect} disabled={isPending}>
           {isPending ? 'Connecting…' : 'Connect MetaMask'}
-        </Button>
+        </button>
       </div>
     );
   }
@@ -45,7 +50,7 @@ function WalletBar() {
     <div className="status">
       <span className="label">Connected:</span>
       <span className="badge">{address.slice(0,6)}…{address.slice(-4)}</span>
-      <Button onClick={()=>disconnect()}>Disconnect</Button>
+      <button className="btn" onClick={()=>disconnect()}>Disconnect</button>
     </div>
   );
 }
