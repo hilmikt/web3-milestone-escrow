@@ -1,14 +1,9 @@
-'use client';
-
-import { parseEther, formatEther } from 'viem';
+import { parseEther, formatEther } from 'viem'
 
 export function toWei(str) {
-  const n = String(str || '').trim();
-  if (!n) throw new Error('Amount required');
-  return parseEther(n);
+  return parseEther(String(str || '0').trim())
 }
 
-export function fromWei(bi) {
-  try { return Number(formatEther(bi)).toString(); }
-  catch { return '0'; }
+export function fromWei(bn) {
+  return formatEther(bn)
 }
