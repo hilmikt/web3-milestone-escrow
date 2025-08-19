@@ -1,5 +1,8 @@
 'use client'
 
+import { Toaster } from 'react-hot-toast';
+
+
 import WalletBar from '../components/WalletBar'
 import MilestoneForm from '../components/MilestoneForm'
 
@@ -13,6 +16,11 @@ export default function Home() {
         <WalletBar />
         <MilestoneForm />
       </div>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+        style: { background: '#0a0b10', color: '#e6e9ef', border: '1px solid #1e2230' }
+        }} />
     </main>
   )
 }
